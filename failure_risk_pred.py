@@ -98,7 +98,7 @@ CUSTOM_CSS = f"""
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
 RISK_THRESHOLDS = {"Low": (0.0, 0.33), "Medium": (0.33, 0.66), "High": (0.66, 1.01)}
-FAIL_CUTOFF = 40  # exam_score < 40 => "At Risk" label used for training
+FAIL_CUTOFF = 10  # exam_score < 10 => "At Risk" label used for training
 
 
 def risk_level_from_prob(p: float) -> str:
