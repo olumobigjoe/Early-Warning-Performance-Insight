@@ -25,24 +25,26 @@ By the time a final exam result comes back, it's too late to help the student wh
 
 ## 📈 What the Data Actually Shows
 
-Trained on **267 real, fully-scored historical records** across three cohorts (2024, 2025, 2026):
+Trained on **267 real, fully-scored historical records** across three cohorts (2024, 2025, 2026), using the current at-risk definition of **`exam_score < 10`**:
 
-| Year | Students | Fully scored | Avg. exam score | At-risk rate |
-|------|---------:|--------------:|------------------:|--------------:|
-| 2024 | 70 | 70 | 46.5 | 37.1% |
-| 2025 | 48 | 48 | 43.4 | 41.7% |
-| 2026 | 151 | 149 | 40.3 | 47.7% |
+| Year | Students | Fully scored | Avg. exam score | At-risk rate (<10) |
+|------|---------:|--------------:|------------------:|----------------------:|
+| 2024 | 70 | 70 | 46.5 | 0.0% |
+| 2025 | 48 | 48 | 43.4 | 0.0% |
+| 2026 | 151 | 149 | 40.3 | 4.7% |
 
 - **Practical score** correlates most strongly with exam outcome (r ≈ 0.57)
 - **CA score** also matters (r ≈ 0.36), and is available earliest
-- **Overall historical at-risk rate: 44.2%** — trending upward year over year
+- **Overall historical at-risk rate: 2.6%** (7 of 267 students) — all 7 are from the 2026 cohort
+
+> ⚠️ **Note on the threshold:** at `exam_score < 10`, only 7 of 267 historical students are labeled "At Risk," and two of the three cohorts (2024, 2025) have zero at-risk students. The model still trains and runs, but with this few positive examples its predictions should be treated as a rough signal, not a precise probability — see the caveat in the Model section below.
 
 ## 🧠 Model
 
-- **Algorithm:** XGBoost classifier (`XGBClassifier`), shallow & regularized (`max_depth=3`, `n_estimators=150`, `reg_lambda=2.0`) — validated at **~76% holdout accuracy, 0.78 AUC**
+- **Algorithm:** XGBoost classifier (`XGBClassifier`), shallow & regularized (`max_depth=3`, `n_estimators=150`, `reg_lambda=2.0`)
 - **Features:** `practical_score`, `ca_score`
-- **Target:** `exam_score < 40` → "At Risk"
-- **Class imbalance:** handled via `scale_pos_weight`
+- **Target:** `exam_score < 10` → "At Risk"
+- **Class imbalance:** handled via `scale_pos_weight` — but with only 7 positive examples in the training data, treat outputs as directional rather than precise, and revisit this threshold as more terms are scored
 - **Output:** calibrated fail-probability → mapped to `Low` (<33%), `Medium` (33–66%), `High` (>66%) risk bands
 
 ## 🗂️ Data Schema
