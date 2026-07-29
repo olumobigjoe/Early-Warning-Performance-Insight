@@ -116,7 +116,7 @@ def risk_color(level: str) -> str:
 # ----------------------------------------------------------------------------
 # DATA LOADING
 # ----------------------------------------------------------------------------
-REQUIRED_COLS = ["student_id", "year", "term", "subject",
+REQUIRED_COLS = ["student_id", "name", "year", "term", "subject",
                   "practical_score", "ca_score", "exam_score"]
 
 
@@ -136,7 +136,7 @@ def validate_and_clean(df: pd.DataFrame) -> pd.DataFrame:
     missing = [c for c in ["student_id", "practical_score", "ca_score"] if c not in df.columns]
     if missing:
         raise ValueError(f"Missing required column(s): {', '.join(missing)}")
-    for c in ["year", "term", "subject", "exam_score"]:
+    for c in ["name", "year", "term", "subject", "exam_score"]:
         if c not in df.columns:
             df[c] = np.nan
     for c in ["practical_score", "ca_score", "exam_score"]:
@@ -311,7 +311,7 @@ with tab1:
         st.markdown("##### Students most at risk this year")
         at_risk_tbl = (
             yr_scored[yr_scored["exam_score"] < FAIL_CUTOFF]
-            .sort_values("exam_score")[["student_id", "practical_score", "ca_score", "exam_score"]]
+            .sort_values("exam_score")[["student_id", "name", "practical_score", "ca_score", "exam_score"]]
         )
         st.dataframe(at_risk_tbl, use_container_width=True, hide_index=True)
 
@@ -356,6 +356,7 @@ with tab2:
     pred_mode = st.radio("Predict for", ["A single student", "A batch of students (upload file)"], horizontal=True)
 
     if pred_mode == "A single student":
+        name_input = st.text_input("Student name (optional)", "")
         c1, c2 = st.columns(2)
         practical = c1.slider("Practical score (out of 20)", 0.0, 20.0, 15.0, 0.5)
         ca = c2.slider("CA score (out of 20)", 0.0, 20.0, 13.0, 0.5)
@@ -363,10 +364,11 @@ with tab2:
         if st.button("Predict risk", type="primary"):
             prob, level = predict_risk(bundle, practical, ca)
             color = risk_color(level)
+            label = name_input.strip() if name_input.strip() else "This student"
             st.markdown(
                 f"""
                 <div class="metric-card" style="text-align:center;">
-                    <div style="font-size:1rem;color:{TEXT_MUTED};">Probability of failing the exam</div>
+                    <div style="font-size:1rem;color:{TEXT_MUTED};">{label} — probability of failing the exam</div>
                     <div style="font-size:2.6rem;font-weight:800;color:{color};">{prob*100:.1f}%</div>
                     <span class="badge" style="background:{color};color:#0F1B33;">{level} risk</span>
                 </div>
@@ -407,6 +409,11 @@ with tab2:
                     levels.append(lv)
                 batch_df["fail_probability"] = np.round(probs, 3)
                 batch_df["risk_level"] = levels
+
+                cols_order = [c for c in ["student_id", "name", "practical_score", "ca_score",
+                                           "fail_probability", "risk_level"] if c in batch_df.columns]
+                other_cols = [c for c in batch_df.columns if c not in cols_order]
+                batch_df = batch_df[cols_order + other_cols]
 
                 def highlight_risk(val):
                     color_map = {"Low": LOW_COLOR, "Medium": MED_COLOR, "High": HIGH_COLOR}
@@ -495,7 +502,7 @@ with tab3:
         unscored["risk_level"] = levels
         st.dataframe(
             unscored.sort_values("fail_probability", ascending=False)[
-                ["student_id", "year", "practical_score", "ca_score", "fail_probability", "risk_level"]
+                ["student_id", "name", "year", "practical_score", "ca_score", "fail_probability", "risk_level"]
             ],
             use_container_width=True, hide_index=True,
         )
