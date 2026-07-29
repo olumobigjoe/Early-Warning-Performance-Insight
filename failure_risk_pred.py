@@ -293,7 +293,7 @@ with tab1:
                 color_discrete_sequence=[PRIMARY],
             )
             fig.add_vline(x=FAIL_CUTOFF, line_dash="dash", line_color=HIGH_COLOR,
-                           annotation_text="Fail cutoff (40)")
+                           annotation_text=f"Fail cutoff ({FAIL_CUTOFF})")
             fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
                                font_color="#EAF0FB")
             st.plotly_chart(fig, use_container_width=True)
