@@ -32,35 +32,53 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-PRIMARY = "#5B8DEF"      # cool blue
-ACCENT = "#22D3C5"       # teal
-VIOLET = "#8B7CF6"       # soft violet
-DARK_BG = "#0F1B33"      # deep navy
-CARD_BG = "#16233F"
-LOW_COLOR = "#22D3C5"    # teal = low risk
-MED_COLOR = "#F5B942"    # amber = medium risk
-HIGH_COLOR = "#F2545B"   # coral red = high risk
-TEXT_MUTED = "#A9B4CE"
+PRIMARY = "#2563EB"      # vivid blue
+ACCENT = "#0EC9B0"       # bright teal
+VIOLET = "#8B5CF6"       # vivid violet
+PAGE_BG_1 = "#3B6EF0"    # vivid saturated blue
+PAGE_BG_2 = "#6D5DF0"    # vivid blue-violet
+PAGE_BG_3 = "#8B5CF6"    # violet
+CARD_BG = "#FFFFFF"
+LOW_COLOR = "#0EC9B0"    # teal = low risk
+MED_COLOR = "#F5A623"    # amber = medium risk
+HIGH_COLOR = "#EF4444"   # red = high risk
+TEXT_ON_PAGE = "#FFFFFF"     # white text directly on the colorful gradient background
+TEXT_MAIN = "#1E293B"        # dark slate text used INSIDE white cards/tables
+TEXT_MUTED = "#E7ECFF"       # muted white-ish for captions on the page
+CARD_MUTED = "#5B6B85"       # muted dark text inside white cards
+BORDER = "rgba(255,255,255,0.35)"
+CHART_FONT = "#FFFFFF"
 
 CUSTOM_CSS = f"""
 <style>
     .stApp {{
-        background: linear-gradient(180deg, {DARK_BG} 0%, #101B30 100%);
-        color: #EAF0FB;
+        background: linear-gradient(135deg, {PAGE_BG_1} 0%, {PAGE_BG_2} 55%, {PAGE_BG_3} 100%);
+        color: {TEXT_ON_PAGE};
     }}
-    section[data-testid="stSidebar"] {{
-        background: #0B1428;
-    }}
-    h1, h2, h3, h4 {{
-        color: #EAF0FB !important;
+    /* Default page-level text (titles, captions, labels) sits directly on the
+       colorful gradient, so it needs to be white to stay readable. */
+    h1, h2, h3, h4, h5, p, span, label, .stMarkdown, .stCaption, small {{
+        color: {TEXT_ON_PAGE} !important;
         font-family: 'Trebuchet MS', sans-serif;
+    }}
+    /* Sidebar has its own light panel, so it keeps dark text for contrast. */
+    section[data-testid="stSidebar"] {{
+        background: linear-gradient(180deg, #F3F6FF 0%, #FFFFFF 100%);
+        border-right: 1px solid rgba(37,99,235,0.15);
+    }}
+    section[data-testid="stSidebar"] * {{
+        color: {TEXT_MAIN} !important;
+    }}
+    /* White content cards keep dark text for their own internal readability. */
+    .metric-card, .metric-card * {{
+        color: {TEXT_MAIN} !important;
     }}
     .metric-card {{
         background: {CARD_BG};
-        border: 1px solid rgba(139,124,246,0.25);
-        border-radius: 14px;
+        border: 1px solid rgba(37,99,235,0.12);
+        border-radius: 16px;
         padding: 18px 20px;
-        box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+        box-shadow: 0 8px 24px rgba(30,41,89,0.18);
     }}
     .badge {{
         display: inline-block;
@@ -71,27 +89,69 @@ CUSTOM_CSS = f"""
         letter-spacing: 0.5px;
     }}
     .stTabs [data-baseweb="tab-list"] {{
-        gap: 6px;
+        gap: 8px;
     }}
     .stTabs [data-baseweb="tab"] {{
-        background-color: {CARD_BG};
-        border-radius: 10px 10px 0 0;
-        padding: 10px 18px;
-        color: {TEXT_MUTED};
+        background-color: rgba(255,255,255,0.18);
+        border: 1px solid rgba(255,255,255,0.35);
+        border-radius: 12px 12px 0 0;
+        padding: 10px 20px;
+        color: {TEXT_ON_PAGE} !important;
+        font-weight: 600;
+    }}
+    .stTabs [data-baseweb="tab"] p {{
+        color: {TEXT_ON_PAGE} !important;
     }}
     .stTabs [aria-selected="true"] {{
-        background: linear-gradient(90deg, {PRIMARY}, {VIOLET});
-        color: white !important;
+        background: #FFFFFF;
+        border: none;
+    }}
+    .stTabs [aria-selected="true"] p {{
+        color: {PRIMARY} !important;
+        font-weight: 800;
     }}
     div[data-testid="stMetricValue"] {{
-        color: {ACCENT};
+        color: #FFFFFF !important;
+        font-weight: 800;
+    }}
+    div[data-testid="stMetricLabel"] {{
+        color: rgba(255,255,255,0.9) !important;
+    }}
+    div[data-testid="stMetric"] {{
+        background: rgba(255,255,255,0.14);
+        border: 1px solid rgba(255,255,255,0.30);
+        border-radius: 14px;
+        padding: 10px 14px;
+    }}
+    .insight-box, .insight-box * {{
+        color: {TEXT_MAIN} !important;
     }}
     .insight-box {{
-        background: linear-gradient(135deg, rgba(91,141,239,0.15), rgba(139,124,246,0.12));
-        border-left: 4px solid {PRIMARY};
-        border-radius: 10px;
+        background: #FFFFFF;
+        border-left: 5px solid {PRIMARY};
+        border-radius: 12px;
         padding: 14px 18px;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
+        box-shadow: 0 6px 18px rgba(30,41,89,0.15);
+    }}
+    .insight-box b {{
+        color: {PRIMARY} !important;
+    }}
+    [data-testid="stDataFrame"] {{
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.35);
+    }}
+    .stButton > button {{
+        background: #FFFFFF;
+        color: {PRIMARY} !important;
+        border: none;
+        border-radius: 10px;
+        font-weight: 700;
+        padding: 0.5rem 1.4rem;
+    }}
+    .stButton > button:hover {{
+        opacity: 0.9;
     }}
 </style>
 """
@@ -295,7 +355,7 @@ with tab1:
             fig.add_vline(x=FAIL_CUTOFF, line_dash="dash", line_color=HIGH_COLOR,
                            annotation_text=f"Fail cutoff ({FAIL_CUTOFF})")
             fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                               font_color="#EAF0FB")
+                               font_color=CHART_FONT)
             st.plotly_chart(fig, use_container_width=True)
         with col2:
             fig2 = px.scatter(
@@ -305,7 +365,7 @@ with tab1:
             )
             fig2.add_hline(y=FAIL_CUTOFF, line_dash="dash", line_color=HIGH_COLOR)
             fig2.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                                font_color="#EAF0FB")
+                                font_color=CHART_FONT)
             st.plotly_chart(fig2, use_container_width=True)
 
         st.markdown("##### Students most at risk this year")
@@ -335,7 +395,7 @@ with tab1:
             yaxis=dict(title="At-risk rate (%)"),
             yaxis2=dict(title="Average exam score", overlaying="y", side="right"),
             paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-            font_color="#EAF0FB", legend=dict(orientation="h", y=1.15),
+            font_color=CHART_FONT, legend=dict(orientation="h", y=1.15),
         )
         st.plotly_chart(fig3, use_container_width=True)
 
@@ -368,7 +428,7 @@ with tab2:
             st.markdown(
                 f"""
                 <div class="metric-card" style="text-align:center;">
-                    <div style="font-size:1rem;color:{TEXT_MUTED};">{label} — probability of failing the exam</div>
+                    <div style="font-size:1rem;color:{CARD_MUTED};">{label} — probability of failing the exam</div>
                     <div style="font-size:2.6rem;font-weight:800;color:{color};">{prob*100:.1f}%</div>
                     <span class="badge" style="background:{color};color:#0F1B33;">{level} risk</span>
                 </div>
@@ -389,7 +449,7 @@ with tab2:
                     ],
                 },
             ))
-            fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", font_color="#EAF0FB", height=280)
+            fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", font_color=CHART_FONT, height=280)
             st.plotly_chart(fig, use_container_width=True)
 
     else:
@@ -445,7 +505,7 @@ with tab3:
         color_continuous_scale=[ACCENT, PRIMARY, VIOLET],
     )
     fig4.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                        font_color="#EAF0FB", showlegend=False, coloraxis_showscale=False)
+                        font_color=CHART_FONT, showlegend=False, coloraxis_showscale=False)
     st.plotly_chart(fig4, use_container_width=True)
 
     labeled = bundle["labeled"]
