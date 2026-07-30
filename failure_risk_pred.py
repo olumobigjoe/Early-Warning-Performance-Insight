@@ -45,7 +45,7 @@ TEXT_MUTED = "#A9B4CE"
 CUSTOM_CSS = f"""
 <style>
     .stApp {{
-        background: linear-gradient(180deg, {DARK_BG} 0%, #101B30 100%);
+        background: linear-gradient(180deg, {DARK_BG} 0%, #3394b4 100%);
         color: #EAF0FB;
     }}
     section[data-testid="stSidebar"] {{
