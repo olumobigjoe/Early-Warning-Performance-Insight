@@ -49,7 +49,7 @@ CUSTOM_CSS = f"""
         color: #EAF0FB;
     }}
     section[data-testid="stSidebar"] {{
-        background: #0B1428;
+        background: #9bb0cl;
     }}
     h1, h2, h3, h4 {{
         color: #EAF0FB !important;
